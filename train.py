@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     model = AutoModelForCausalLM.from_pretrained(
         "mistralai/Mistral-7B-v0.1",
-        torch_dtype=torch.float16,
+        torch_dtype=torch.bfloat16,
     )
     model.use_cache = False
 
@@ -90,8 +90,8 @@ if __name__ == "__main__":
         max_prompt_length=512,
         # Trainer (train)
         output_dir="./mistral-7b-v0.1-orpo",
-        fp16=True,
-        bf16=False,
+        # fp16=True,
+        bf16=True,
         do_train=True,
         seed=42,
         per_device_train_batch_size=4,
@@ -115,10 +115,9 @@ if __name__ == "__main__":
         # Trainer (save)
         hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full",
         hub_private_repo=True,
-        push_to_hub=True,
-        hub_strategy="no",
+        push_to_hub=False,
         save_strategy="epoch",
-        save_total_limit=None,
+        save_total_limit=2,
         metric_for_best_model="eval_loss",
         load_best_model_at_end=True,
     )
@@ -155,9 +154,8 @@ if __name__ == "__main__":
         tokenizer.save_pretrained(f"{training_args.output_dir}/final_checkpoint")
         logger.info("*** Model successfully saved locally ***")
 
-        if training_args.push_to_hub is True:
-            logger.info("*** Pushing model to Hub ***")
-            trainer.push_to_hub()
-            logger.info("*** Model successfully pushed to Hub ***")
+        logger.info("*** Pushing model to Hub ***")
+        trainer.push_to_hub()
+        logger.info("*** Model successfully pushed to Hub ***")
 
     logger.info("*** Run complete! ***")
