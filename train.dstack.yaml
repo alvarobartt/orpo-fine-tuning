@@ -1,0 +1,21 @@
+type: task
+
+python: "3.11"
+env:
+  - HF_HUB_ENABLE_HF_TRANSFER=1
+  - HF_TOKEN=${{ run.args.hf_token }}
+  - WANDB_API_KEY=${{ run.args.wandb_api_key }}
+commands:
+  - pip install pip --upgrade
+  - pip install -r requirements-dstack.txt
+  - pip install packaging
+  - pip uninstall -y ninja
+  - pip install ninja
+  - pip install flash-attn --no-build-isolation
+  - ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file fsdp.yaml train.py
+ports:
+  - 6006
+
+resources:
+  gpu: 80GB:4
+  disk: 500GB
