@@ -81,12 +81,12 @@ if __name__ == "__main__":
         wandb.init(
             entity="alvarobartt",
             project="Mistral-7B-v0.1-ORPO",
-            name="full-beta-0.05-lr-5e-6",
+            name="full-beta-0.1-lr-5e-6",
         )
 
     training_args = ORPOConfig(
         # ORPOTrainer
-        beta=0.05,  # official: alpha=0.05
+        beta=0.1,  # official: alpha=0.05
         max_length=2048,  # former: 1024,
         max_prompt_length=1792,  # former: 512,
         # Trainer (train)
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
-        hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full-beta-0.05",
+        hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full-beta-0.1",
         hub_private_repo=True,
         push_to_hub=False,
         save_strategy="epoch",
