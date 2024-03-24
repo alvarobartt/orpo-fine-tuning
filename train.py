@@ -44,6 +44,7 @@ if __name__ == "__main__":
     model = AutoModelForCausalLM.from_pretrained(
         "mistralai/Mistral-7B-v0.1",
         torch_dtype=torch.bfloat16,
+        attn_implementation="flash_attention_2",
     )
     model.use_cache = False
 
@@ -80,28 +81,27 @@ if __name__ == "__main__":
         wandb.init(
             entity="alvarobartt",
             project="Mistral-7B-v0.1-ORPO",
-            name="beta-0.1-lr-5e-7",
+            name="full-beta-0.05-lr-5e-6",
         )
 
     training_args = ORPOConfig(
         # ORPOTrainer
-        beta=0.1,
-        max_length=1024,
-        max_prompt_length=512,
+        beta=0.05,  # official: alpha=0.05
+        max_length=2048,  # former: 1024,
+        max_prompt_length=1792,  # former: 512,
         # Trainer (train)
         output_dir="./mistral-7b-v0.1-orpo",
-        # fp16=True,
         bf16=True,
         do_train=True,
         seed=42,
-        per_device_train_batch_size=4,
-        gradient_accumulation_steps=2,
+        per_device_train_batch_size=8,
+        gradient_accumulation_steps=1,  # former: 2
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
-        learning_rate=5.0e-7,
-        lr_scheduler_type="cosine",
-        num_train_epochs=10,
-        optim="adamw_torch",
+        learning_rate=5.0e-6,  # former: 5.0e-7
+        lr_scheduler_type="cosine",  # official: "inverse_sqrt"
+        num_train_epochs=3,
+        optim="adamw_bnb_8bit",  # former: "adamw_torch"
         # Trainer (warmup)
         warmup_ratio=0.1,
         warmup_steps=100,
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         report_to=["wandb", "tensorboard"],
         # Trainer (eval)
         do_eval=True,
-        per_device_eval_batch_size=4,
+        per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
         hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full",
@@ -134,9 +134,9 @@ if __name__ == "__main__":
     result = trainer.train()
     logger.info("*** Training completed ***")
 
-    metrics = result.metrics
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
+    # metrics = result.metrics
+    # trainer.log_metrics("train", metrics)
+    # trainer.save_metrics("train", metrics)
     trainer.save_state()
     logger.info("*** Training metrics logged/saved ***")
 
