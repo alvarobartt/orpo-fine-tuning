@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     training_args = ORPOConfig(
         # ORPOTrainer
-        beta=0.05,  # official: alpha=0.05
+        beta=0.05,
         max_length=2048,  # former: 1024,
         max_prompt_length=1792,  # former: 512,
         # Trainer (train)
@@ -134,31 +134,28 @@ if __name__ == "__main__":
     result = trainer.train()
     logger.info("*** Training completed ***")
 
-    # metrics = result.metrics
-    # trainer.log_metrics("train", metrics)
-    # trainer.save_metrics("train", metrics)
     trainer.save_state()
-    logger.info("*** Training metrics logged/saved ***")
+    logger.info("*** Training state saved ***")
 
     if accelerator.is_main_process:
         wandb.finish()
 
-        if trainer.is_fsdp_enabled:
-            trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
+    if trainer.is_fsdp_enabled:
+        trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
 
-        trainer.save_model(training_args.output_dir)
-        # Restore k,v cache for fast inference
-        trainer.model.config.use_cache = True  # type: ignore
+    trainer.save_model(training_args.output_dir)
+    # Restore k,v cache for fast inference
+    trainer.model.config.use_cache = True  # type: ignore
 
-        logger.info("*** Saving model locally ***")
-        trainer.model.config.save_pretrained(
-            f"{training_args.output_dir}/final_checkpoint"
-        )  # type: ignore
-        tokenizer.save_pretrained(f"{training_args.output_dir}/final_checkpoint")
-        logger.info("*** Model successfully saved locally ***")
+    logger.info("*** Saving model locally ***")
+    trainer.model.config.save_pretrained(
+        f"{training_args.output_dir}/final_checkpoint"
+    )  # type: ignore
+    tokenizer.save_pretrained(f"{training_args.output_dir}/final_checkpoint")
+    logger.info("*** Model successfully saved locally ***")
 
-        logger.info("*** Pushing model to Hub ***")
-        trainer.push_to_hub()
-        logger.info("*** Model successfully pushed to Hub ***")
+    logger.info("*** Pushing model to Hub ***")
+    trainer.push_to_hub()
+    logger.info("*** Model successfully pushed to Hub ***")
 
     logger.info("*** Run complete! ***")
