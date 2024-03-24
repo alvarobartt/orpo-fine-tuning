@@ -10,5 +10,5 @@ sentencepiece==0.1.99
 tensorboard
 torch==2.1.1
 transformers==4.39.0
-git+https://github.com/huggingface/trl.git@orpo
+git+https://github.com/huggingface/trl.git@main
 wandb
