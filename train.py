@@ -143,6 +143,9 @@ if __name__ == "__main__":
     if accelerator.is_main_process:
         wandb.finish()
 
+        if trainer.is_fsdp_enabled:
+            trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
+
         trainer.save_model(training_args.output_dir)
         # Restore k,v cache for fast inference
         trainer.model.config.use_cache = True  # type: ignore
