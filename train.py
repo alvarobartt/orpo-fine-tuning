@@ -113,7 +113,7 @@ if __name__ == "__main__":
         per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
-        hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full",
+        hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full-beta-0.05",
         hub_private_repo=True,
         push_to_hub=False,
         save_strategy="epoch",
