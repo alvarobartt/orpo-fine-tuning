@@ -99,8 +99,8 @@ if __name__ == "__main__":
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
         learning_rate=5.0e-6,  # former: 5.0e-7
-        lr_scheduler_type="cosine",  # official: "inverse_sqrt"
-        num_train_epochs=3,
+        lr_scheduler_type="inverse_sqrt",  # former: "cosine"
+        num_train_epochs=5,
         optim="adamw_bnb_8bit",  # former: "adamw_torch"
         # Trainer (warmup)
         warmup_ratio=0.1,
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
-        hub_model_id="alvarobartt/mistral-orpo-mix",
+        hub_model_id="alvarobartt/mistral-orpo-mix-alpha",
         hub_private_repo=True,
         push_to_hub=False,
         save_strategy="no",
