@@ -59,7 +59,15 @@ lm_eval --model hf \
 Then run it as:
 
 ```bash
-alpaca_eval evaluate_from_model --model_configs "mistral-orpo-mix" --annotators_config "alpaca_eval_gpt4_turbo_fn"
+alpaca_eval evaluate_from_model --model_configs "mistral-orpo-mix" --annotators_config "alpaca_eval_gpt4"
+alpaca_eval evaluate_from_model --model_configs "mistral-orpo-mix" --annotators_config "weighted_alpaca_eval_gpt4_turbo"
+```
+
+Or if already generated:
+
+```bash
+alpaca_eval evaluate --model_outputs "results/mistral-orpo-mix/model_outputs.json" --annotators_config "alpaca_eval_gpt4" 
+alpaca_eval evaluate --model_outputs "results/mistral-orpo-mix/model_outputs.json" --annotators_config "weighted_alpaca_eval_gpt4_turbo"
 ```
 
 ### MT-Bench
