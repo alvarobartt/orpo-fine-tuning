@@ -8,21 +8,36 @@ pip install -r requirements.txt
 
 ## 🦾 Training
 
-## ⚡️ FSDP
-
-```bash
-ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file fsdp.yaml train.py
-```
-
 ## ⚡️DeepSpeed Zero 3
 
 ```bash
 ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file deepspeed-zero3.yaml train.py
 ```
 
+## ⚡️ FSDP
+
+Due to the model embedding resizing due to the added ChatML tokens, the optimizer saving is
+failing on each save, while the model saving is fine.
+
+> [!ERROR]
+> RuntimeError: shape '[32002, 4096]' is invalid for input of size 64005
+
+```bash
+ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file fsdp.yaml train.py
+```
+
+
 ## 🧪 Evaluation
 
 ### IF-Eval
+
+Install it as:
+
+```bash
+pip install "lm_eval[ifeval,wandb]" --quiet
+```
+
+Then run it as:
 
 ```bash
 lm_eval --model hf \
@@ -38,9 +53,21 @@ lm_eval --model hf \
 ### AlpacaEval 2.0
 
 > [!NOTE]
-> The files under `benchmarks/alpaca_eval/model_configs` need to be copied to `alpaca_eval/model_configs` to run the script below.
+> The files under `benchmarks/alpaca_eval/model_configs` need to be copied to `alpaca_eval/model_configs` to run the script below,
+> or just install `alpaca_eval` from the fork as `pip install git+https://github.com/alvarobartt/alpaca_eval.git@main --quiet`.
+
+Then run it as:
 
 ```bash
-alpaca_eval evaluate_from_model --model_configs "mistral-orpo-mix" --annotators_config "alpaca_eval_g
-pt4_turbo_fn"
+alpaca_eval evaluate_from_model --model_configs "mistral-orpo-mix" --annotators_config "alpaca_eval_gpt4_turbo_fn"
 ```
+
+### MT-Bench
+
+Install from source as:
+
+```bash
+pip install git+https://github.com/alvarobartt/FastChat.git@main --quiet
+```
+
+Then run it as described at [FastChat - LLM Judge Evaluation](https://github.com/lm-sys/FastChat/tree/main/fastchat/llm_judge#mt-bench).
