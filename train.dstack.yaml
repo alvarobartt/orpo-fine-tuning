@@ -7,12 +7,13 @@ env:
   - WANDB_API_KEY=${{ run.args.wandb_api_key }}
 commands:
   - pip install pip --upgrade
+  - conda install cuda
   - pip install -r requirements-dstack.txt
   - pip install packaging
   - pip uninstall -y ninja
   - pip install ninja
   - pip install flash-attn --no-build-isolation
-  - ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file fsdp.yaml train.py
+  - ACCELERATE_LOG_LEVEL=INFO accelerate launch --config_file deepspeed-zero3.yaml train.py
 ports:
   - 6006
 
