@@ -1,0 +1,32 @@
+type: task
+
+python: 3.11
+env:
+  - HF_HUB_ENABLE_HF_TRANSFER=1
+  - HF_TOKEN=${{ run.args.hf_token }}
+  - WANDB_API_KEY=${{ run.args.wandb_api_key }}
+commands:
+  - pip install pip --upgrade
+  - conda install cuda
+  - pip install accelerate "lm_eval[ifeval,wandb]" torch transformers
+  - pip install packaging
+  - pip uninstall ninja
+  - pip install ninja
+  - pip install flash-attn --no-build-isolation
+  - >
+    lm_eval \
+    --model hf \
+    --model_args pretrained=alvarobartt/mistral-orpo-mix,dtype=bfloat16,attn_implementation=flash_attention_2 \
+    --tasks ifeval \
+    --device cuda:0 \
+    --batch_size 16 \
+    --output_path output/mistral-orpo-mix \
+    --wandb_args project=Mistral-7B-v0.1-ORPO \
+    --log_samples
+
+resources:
+  gpu:
+    name: A100
+    memory: 80GB
+    count: 1
+  disk: 100GB
