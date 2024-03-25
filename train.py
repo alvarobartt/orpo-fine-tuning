@@ -99,8 +99,8 @@ if __name__ == "__main__":
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
         learning_rate=5.0e-6,  # former: 5.0e-7
-        lr_scheduler_type="cosine",  # official: "inverse_sqrt"
-        num_train_epochs=3,
+        lr_scheduler_type="inverse_sqrt",  # former: "cosine"
+        num_train_epochs=5,
         optim="adamw_bnb_8bit",  # former: "adamw_torch"
         # Trainer (warmup)
         warmup_ratio=0.1,
@@ -113,13 +113,11 @@ if __name__ == "__main__":
         per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
-        hub_model_id="alvarobartt/Mistral-7B-v0.1-ORPO-full-beta-0.05",
+        hub_model_id="alvarobartt/mistral-orpo-mix-alpha",
         hub_private_repo=True,
         push_to_hub=False,
-        save_strategy="epoch",
-        save_total_limit=2,
-        metric_for_best_model="eval_loss",
-        load_best_model_at_end=True,
+        save_strategy="no",
+        save_total_limit=None,
     )
 
     trainer = ORPOTrainer(
