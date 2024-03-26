@@ -81,27 +81,27 @@ if __name__ == "__main__":
         wandb.init(
             entity="alvarobartt",
             project="Mistral-7B-v0.1-ORPO",
-            name="full-beta-0.05-lr-5e-6",
+            name="b0.05-l1024-pl512-lr5e-7-cosine",
         )
 
     training_args = ORPOConfig(
         # ORPOTrainer
-        beta=0.05,
-        max_length=2048,  # former: 1024,
-        max_prompt_length=1792,  # former: 512,
+        beta=0.05,  # official: 0.05, former: 0.1
+        max_length=1024,  # official: 2048, former: 1024
+        max_prompt_length=512,  # official: 1792, former: 512
         # Trainer (train)
         output_dir="./mistral-orpo",
         bf16=True,
         do_train=True,
         seed=42,
         per_device_train_batch_size=8,
-        gradient_accumulation_steps=1,  # former: 2
+        gradient_accumulation_steps=2,  # official: 1, former: 2
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
-        learning_rate=5.0e-6,  # former: 5.0e-7
-        lr_scheduler_type="inverse_sqrt",  # former: "cosine"
-        num_train_epochs=5,
-        optim="adamw_bnb_8bit",  # former: "adamw_torch"
+        learning_rate=5.0e-7,  # official: 5.0e-6, former: 5.0e-7
+        lr_scheduler_type="cosine",  # official: "inverse_sqrt", former: "cosine"
+        num_train_epochs=3,
+        optim="adamw_bnb_8bit",  # official: "adamw_bnb_8bit", former: "adamw_torch"
         # Trainer (warmup)
         warmup_ratio=0.1,
         warmup_steps=100,
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         per_device_eval_batch_size=8,
         evaluation_strategy="epoch",
         # Trainer (save)
-        hub_model_id="alvarobartt/mistral-orpo-mix-alpha",
+        hub_model_id="alvarobartt/mistral-orpo-mix-b0.05-l1024-pl512-lr5e-7-cosine",
         hub_private_repo=True,
         push_to_hub=False,
         save_strategy="no",
